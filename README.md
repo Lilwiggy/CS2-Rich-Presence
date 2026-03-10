@@ -1,0 +1,1 @@
+# Counter Strike 2 Rich Presence Discord Integration
