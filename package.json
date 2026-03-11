@@ -1,0 +1,22 @@
+{
+  "name": "cs2-rpc",
+  "version": "0.0.1",
+  "description": "A Rich Presence application for Discord and CS2",
+  "license": "MIT",
+  "author": "Isabella Wiggins",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsc && node out/index.js",
+    "dev": "ts-node-dev --respawn src/index.ts",
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.4.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
