@@ -9,11 +9,11 @@ switch (platform) {
     // TODO: Check for multiple install locations across multiple drives on the machine eg. D:\, F:\, sdb2, etc.
     case 'linux':
         // :D
-        defaultSteamDir = `${os.homedir}/.var/app/com.valvesoftware.Steam/.local/share/Steam/steamapps/common/Counter-Strike\ Global\ Offensive/game/csgo`;
+        defaultSteamDir = `${os.homedir}/.var/app/com.valvesoftware.Steam/.local/share/Steam/steamapps/common/Counter-Strike\ Global\ Offensive/game/csgo/cfg`;
     break;
     case 'win32':
         // :c (at least you can lose in faceit lobbies instead of MM now :3)
-        defaultSteamDir = 'C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike\ Global\ Offensive\game\csgo';
+        defaultSteamDir = 'C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike\ Global\ Offensive\game\csgo/cfg';
     break;
     case 'darwin':
         // huh
@@ -24,7 +24,7 @@ switch (platform) {
 // Check if config exists, if not then create one
 if (!existsSync(`${defaultSteamDir}/cs2rpc.cfg`)) {
     console.log('============================== No config found. Writing one now... ==============================');
-    copyFileSync('./src/cs2rpc.cfg', `${defaultSteamDir}/cs2rpc.cfg`);
+    copyFileSync('./src/gamestate_integration_cs2rpc.cfg', `${defaultSteamDir}/gamestate_integration_cs2rpc.cfg`);
     console.log('============================== Done writing config ==============================');
 }
 
