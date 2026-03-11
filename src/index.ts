@@ -13,7 +13,7 @@ switch (platform) {
     break;
     case 'win32':
         // :c (at least you can lose in faceit lobbies instead of MM now :3)
-        defaultSteamDir = 'C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike\ Global\ Offensive\game\csgo/cfg';
+        defaultSteamDir = 'C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike\ Global\ Offensive\game\csgo\cfg';
     break;
     case 'darwin':
         // huh
@@ -22,7 +22,7 @@ switch (platform) {
 }
 
 // Check if config exists, if not then create one
-if (!existsSync(`${defaultSteamDir}/cs2rpc.cfg`)) {
+if (!existsSync(`${defaultSteamDir}/gamestate_integration_cs2rpc.cfg`)) {
     console.log('============================== No config found. Writing one now... ==============================');
     copyFileSync('./src/gamestate_integration_cs2rpc.cfg', `${defaultSteamDir}/gamestate_integration_cs2rpc.cfg`);
     console.log('============================== Done writing config ==============================');
