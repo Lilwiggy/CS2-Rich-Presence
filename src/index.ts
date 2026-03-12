@@ -1,6 +1,7 @@
 import { existsSync, copyFileSync } from 'node:fs'
 import * as os from 'os'; // Required for detecting platform usage
 import { startServer } from './server.js';
+import { Client } from "@xhayper/discord-rpc";
 
 let platform = os.platform();
 let defaultSteamDir = ''; // The default directory in which CS2 is installed to. Will be set after detecting platform
@@ -28,4 +29,14 @@ if (!existsSync(`${defaultSteamDir}/gamestate_integration_cs2rpc.cfg`)) {
     console.log('============================== Done writing config ==============================');
 }
 
+// Start webserver for Game State Integration (GSI) communication
 startServer();
+
+// Initialize the discord Rich Presence Client (RPC)
+const discordClient = new Client({
+    clientId: '494943194165805082'
+});
+
+discordClient.login();
+
+export { discordClient as client };
