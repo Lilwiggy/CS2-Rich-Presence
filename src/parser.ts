@@ -41,7 +41,12 @@ export function parseInput(req: Request) {
     }
     // Check if player is loading into map still or joined the server
     if (gameState.map && !gameState.player) {
-        presence.details = 'Loading...';
+        if (!mapStart) {
+            presence.details = 'Loading...';
+        } else {
+            presence.details = 'Freecam';
+            presence.startTimestamp = mapStart;
+        }
         presence.largeImageKey = 'main-icon';
     } else {
         // We have confirmed in the above if statement that both map and player will exist on the gameState object
@@ -60,10 +65,6 @@ export function parseInput(req: Request) {
                 presence.details = 'Playing Arms Race'
             break;
         }
-        // @ts-ignore The following line is correct but poor typings exist in the csgo-gsi-type library
-        // <Player> contains the match_stats which has the KAD and extra info in the POST request made by CS2
-        // but not in the typings library
-        presence.state = `K: ${gameState.player!.match_stats.kills} A: ${gameState.player!.match_stats.assists} D: ${gameState.player!.match_stats.deaths}`;
         let team = gameState.player!.team;
         presence.smallImageText = `Playing on ${team} side`;
         presence.smallImageKey = `${team.toLowerCase()}_logo`;
@@ -84,13 +85,21 @@ export function parseInput(req: Request) {
                 presence.largeImageText = 'nuke';
             break;
         }
-
         // Clarify if the player is playing or spectating 
         if (gameClient.id !== gameState.player!.steamid && gameClient.id !== '') {
             presence.details = 'Spectating...';
+            // @ts-ignore The following line is correct but poor typings exist in the csgo-gsi-type library
+            // <Player> contains the match_stats which has the KAD and extra info in the POST request made by CS2
+            // but not in the typings library
+            presence.state = `Spectated: K: ${gameState.player!.match_stats.kills} A: ${gameState.player!.match_stats.assists} D: ${gameState.player!.match_stats.deaths}`;
             client.user?.setActivity(presence);
             presence = {}; // Clean up our mess :)
             return;
+        } else {
+            // @ts-ignore The following line is correct but poor typings exist in the csgo-gsi-type library
+            // <Player> contains the match_stats which has the KAD and extra info in the POST request made by CS2
+            // but not in the typings library
+            presence.state = `K: ${gameState.player!.match_stats.kills} A: ${gameState.player!.match_stats.assists} D: ${gameState.player!.match_stats.deaths}`;
         }
     }
     client.user?.setActivity(presence);
