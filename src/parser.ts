@@ -43,11 +43,28 @@ export function parseInput(req: Request) {
     if (gameState.map && !gameState.player) {
         if (!mapStart) {
             presence.details = 'Loading...';
+            presence.largeImageKey = 'main-icon';
         } else {
             presence.details = 'Freecam';
             presence.startTimestamp = mapStart;
+            // Valve has different names for certain maps and it needs to translated
+            switch (gameState.map!.name) {
+                default:
+                    presence.largeImageKey = gameState.map!.name.substring(3);
+                    presence.largeImageText = gameState.map!.name.substring(3).charAt(0).toUpperCase() + gameState.map!.name.slice(4);
+                break;
+                case 'de_ancient_night':
+                case 'de_ancient_day':
+                    presence.largeImageText = 'Ancient';
+                    presence.largeImageKey = 'ancient';
+                break;
+                case 'de_nuke_night':
+                case 'de_nuke_day':
+                    presence.largeImageText = 'Nuke';
+                    presence.largeImageText = 'nuke';
+                break;
+            }
         }
-        presence.largeImageKey = 'main-icon';
     } else {
         // We have confirmed in the above if statement that both map and player will exist on the gameState object
         // but TypeScript yells at me because 'player could be undefined' like stfu bro
@@ -101,6 +118,7 @@ export function parseInput(req: Request) {
             // but not in the typings library
             presence.state = `K: ${gameState.player!.match_stats.kills} A: ${gameState.player!.match_stats.assists} D: ${gameState.player!.match_stats.deaths}`;
         }
+        presence.details += ` | T: ${gameState.map!.team_t.score} CT: ${gameState.map!.team_ct.score}`
     }
     client.user?.setActivity(presence);
     presence = {}; // Clean up our mess :)
