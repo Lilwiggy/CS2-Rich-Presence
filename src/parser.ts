@@ -118,8 +118,26 @@ export function parseInput(req: Request) {
             // but not in the typings library
             presence.state = `K: ${gameState.player!.match_stats.kills} A: ${gameState.player!.match_stats.assists} D: ${gameState.player!.match_stats.deaths}`;
         }
-        presence.details += ` | T: ${gameState.map!.team_t.score} CT: ${gameState.map!.team_ct.score}`
+        presence.details += ` | T: ${gameState.map!.team_t.score} CT: ${gameState.map!.team_ct.score}`;
+
+        // Fun lil easter eggs to display when the round is over or during freeze time
+        if (gameState.round?.phase === 'over' || gameState.round?.phase === 'freezetime') {
+            // Tease the team for choking :3
+            if (gameState.player?.team === 'T' && gameState.map!.team_t.consecutive_round_losses > 5) {
+                presence.details = 'The T side is throwing the match!';
+                presence.state = `The Ts have lost ${gameState.map!.team_t.consecutive_round_losses} rounds in a row.`;
+            } else if (gameState.player?.team === 'CT' && gameState.map!.team_ct.consecutive_round_losses > 5) {
+                presence.details = 'The CT side is throwing the match!';
+                presence.state = `The CTs have lost ${gameState.map!.team_ct.consecutive_round_losses} rounds in a row.`;
+            }
+            // Player gets an ace, easy work idk
+            if (gameState.player!.state.round_kills >= 5) {
+                presence.details = 'Ace!';
+                presence.state = 'The player has killed the entire enemy team!';
+            }
+        }
     }
+
     client.user?.setActivity(presence);
     presence = {}; // Clean up our mess :)
 }
