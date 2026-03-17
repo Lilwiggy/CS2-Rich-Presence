@@ -2,9 +2,11 @@ import { existsSync, copyFileSync } from 'node:fs'
 import * as os from 'os'; // Required for detecting platform usage
 import { startServer } from './server.js';
 import { Client } from "@xhayper/discord-rpc";
+import { clearDate } from './parser.js';
 
 let platform = os.platform();
 let defaultSteamDir = ''; // The default directory in which CS2 is installed to. Will be set after detecting platform
+let lastHeartbeat: Date;
 
 switch (platform) {
     // TODO: Check for multiple install locations across multiple drives on the machine eg. D:\, F:\, sdb2, etc.
@@ -39,4 +41,18 @@ const discordClient = new Client({
 
 discordClient.login();
 
-export { discordClient as client };
+// This function will run every 
+setInterval(() => {
+    if (!lastHeartbeat) return; // Game is probably taking too long to launch
+    if (Math.abs(new Date().getTime() - lastHeartbeat.getTime()) / 1000 >= 15) {
+        clearDate(); // Clears the start date for the gameClient
+        discordClient.destroy();
+    } else if (!discordClient.isConnected) {
+        discordClient.connect();
+    }
+}, 15000);
+
+function updateHeartbeat (heartBeat: Date) {
+    lastHeartbeat = heartBeat;
+}
+export { discordClient as client, updateHeartbeat };

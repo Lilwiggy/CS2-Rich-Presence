@@ -1,12 +1,12 @@
 import type { Request } from 'express';
 import type { GameState, GameStatePlaying, GameStateSpectating } from 'csgo-gsi-types';
 import type { SetActivity } from '@xhayper/discord-rpc';
-import { client } from './index.js'; 
+import { client, updateHeartbeat } from './index.js'; 
 
 interface GameClient {
     id: string;
     name: string;
-    start: Date;
+    start: Date | undefined;
 }
 
 let gameClient: GameClient = {
@@ -19,6 +19,10 @@ let mapStart: Date | undefined;
 let presence: SetActivity = {};
 
 export function parseInput(req: Request) {
+    // We need to update our heartbeat for checking if cs2 is running or not
+    updateHeartbeat(new Date());
+    if (!client.isConnected) return; // The connection has been terminated from Discord, will re-connect when app is open.
+    if (!gameClient.start) gameClient.start = new Date();
     let gameState: GameState | GameStatePlaying | GameStateSpectating = req.body;
     // Long if statement but there are 3 important factors here
     // 1. We need to ensure that the player exists
@@ -142,7 +146,12 @@ export function parseInput(req: Request) {
     presence = {}; // Clean up our mess :)
 }
 
+function clearDate() {
+    gameClient.start = undefined;
+}
 
 function capitalize(str: string) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
+export { clearDate }
