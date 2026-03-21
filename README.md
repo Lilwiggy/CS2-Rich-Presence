@@ -9,12 +9,12 @@ Simply download the [install.sh](https://github.com/Lilwiggy/CS2-Rich-Presence/b
 This will download the latest release of this repository and create a system service file.
 If the service is not running when you check:
 ```bash
-systemctl status csrpc
+systemctl --user status csrpc
 ```
 Then run the following:
 ```bash
-sudo systemctl daemon-reload
-sudo systemctl restart csrp
+systemctl --user daemon-reload
+systemctl --user restart csrp
 ```
 ### Windows
 Coming soon as I am too lazy to boot up windows to write an installer at this moment
