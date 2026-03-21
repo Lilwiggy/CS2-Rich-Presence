@@ -26,22 +26,20 @@ tsc
 npm start
 EOF
             sudo chmod +x /usr/bin/csrpc
-            CURRENT_UID=$(id -u)
-sudo tee /etc/systemd/system/csrpc.service > /dev/null << EOF
+            mkdir -p $HOME/.config/systemd/user
+            tee $HOME/.config/systemd/user/csrpc.service > /dev/null << EOF
 [Unit]
 Description=CS2 RPC Service
 
 [Service]
-User=$USER
-Group=$USER
-Environment="XDG_RUNTIME_DIR=/run/user/$CURRENT_UID"
 ExecStart=/usr/bin/csrpc
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
 EOF
-            sudo systemctl daemon-reload
-            sudo systemctl enable csrpc
+            systemctl --user daemon-reload
+            systemctl --user enable csrpc
+            systemctl --user start csrpc
             printf "The CS2 Rich Presence application has been installed.\n"
         else
             printf "Could not find wget, please install wget with your preferred package manager then run the install script again\n"
